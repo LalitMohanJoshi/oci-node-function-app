@@ -1,4 +1,4 @@
-# Node Application [Serverless Function Application]
+# Node Application [Serverless Function Application - Oracle ]
 
 This application is built for deploying in Oracle cloud function app.
 It contains all the necessary config to run applications in the OCI serverless environment.
