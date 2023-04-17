@@ -1,0 +1,42 @@
+version: 0.1
+component: build
+timeoutInSeconds: 6000
+runAs: root
+shell: bash
+env:
+  # these are local variables to the build config
+  variables:
+    key: "value"
+
+  # the value of a vaultVariable is the secret-id (in OCI ID format) stored in the OCI Vault service
+  # you can then access the value of that secret in your build_spec.yaml commands
+  vaultVariables:
+  #  EXAMPLE_SECRET: "YOUR-SECRET-OCID"
+  
+  # exportedVariables are made available to use as parameters in sucessor Build Pipeline stages
+  # For this Build to run, the Build Pipeline needs to have a BUILDRUN_HASH parameter set
+  exportedVariables:
+    - BUILDRUN_HASH
+
+steps:
+  - type: Command
+    timeoutInSeconds: 1600
+    name: "Create Docker Image"
+    command: |
+      docker build -t node-function-service .
+    onFailure:
+      - type: Command
+        command: |
+          echo "docker build Failure"
+        timeoutInSeconds: 40
+        runAs: root 
+  - type: Command
+    timeoutInSeconds: 400
+    name: "Test Docker Image"
+    command: |
+      build_result=SUCESS
+      patch_number==`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+outputArtifacts:
+  - name: build_artifact_image
+    type: DOCKER_IMAGE
+    location:  node-function-service
